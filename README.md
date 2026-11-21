@@ -4,7 +4,7 @@ AssetTracker is an offline Windows desktop application for tracking IT and labor
 
 ## Download
 
-- [Download AssetTracker Setup 1.0.0.exe (Windows)]([https://github.com/<your-username>/<your-repo>/releases/latest](https://drive.google.com/file/d/1gEZkpTcij2Pm718mYsvyZy100NlCxOZS/view?usp=drive_link))
+- [Download AssetTracker Setup 1.0.0.exe (Windows)](https://drive.google.com/file/d/1gEZkpTcij2Pm718mYsvyZy100NlCxOZS/view?usp=drive_link)
 
 ## Features
 
