@@ -1,4 +1,4 @@
-# AssetTracker Desktop (v1.0.0)
+# AssetTracker Desktop (v1.0.0) 
 
 AssetTracker is an offline Windows desktop application for tracking IT and laboratory hardware assets. It runs a PHP and SQLite interface inside an Electron desktop window so equipment records stay stored locally on the workstation.
 
