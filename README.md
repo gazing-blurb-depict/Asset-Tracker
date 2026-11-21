@@ -23,8 +23,3 @@ AssetTracker is an offline Windows desktop application for tracking IT and labor
 2. Download **`AssetTracker Setup 1.0.0.exe`** from the release link above and run the installer.
 3. If Windows Defender SmartScreen appears, click **More info** and select **Run anyway**.
 4. Open **AssetTracker** from your Desktop shortcut or Start Menu.
-
-## Repository Contents
-
-- `asset-tracker/` — Core PHP, HTML, CSS, and SQLite application files.
-- `README.md` — Documentation and installer download page.
