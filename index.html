@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AssetTracker — IT & Lab Asset Management</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --danger: #dc2626;
+      --success-bg: #dcfce7;
+      --success-text: #166534;
+      --warn-bg: #fef9c3;
+      --warn-text: #854d0e;
+      --gray-bg: #f1f5f9;
+      --gray-text: #475569;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); line-height: 1.5; }
+    header {
+      background: #0f172a;
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    header h1 { font-size: 1.25rem; font-weight: 600; }
+    header p { font-size: 0.85rem; color: #94a3b8; }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .badge {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+    }
+    .container { max-width: 1120px; margin: 24px auto; padding: 0 16px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+    .stat-card span { font-size: 0.85rem; color: var(--muted); display: block; }
+    .stat-card strong { font-size: 1.65rem; font-weight: 700; margin-top: 4px; display: block; }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+    .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+    input, select {
+      padding: 8px 11px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: #fff;
+      color: var(--text);
+    }
+    input:focus, select:focus { outline: 2px solid #93c5fd; border-color: var(--primary); }
+    button, .btn {
+      padding: 9px 14px;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #e2e8f0; color: var(--text); }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-sm { padding: 5px 9px; font-size: 0.8rem; }
+    .btn-danger { background: #fee2e2; color: var(--danger); }
+    .btn-danger:hover { background: #fecaca; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--border); }
+    th { background: #f8fafc; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    tr:hover td { background: #f8fafc; }
+    .pill {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .pill-active { background: var(--success-bg); color: var(--success-text); }
+    .pill-maintenance { background: var(--warn-bg); color: var(--warn-text); }
+    .pill-retired { background: var(--gray-bg); color: var(--gray-text); }
+    .table-wrap { overflow-x: auto; }
+    .empty { text-align: center; padding: 32px; color: var(--muted); }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 480px;
+      padding: 22px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
+    }
+    .modal h2 { font-size: 1.15rem; margin-bottom: 14px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-grid .full { grid-column: 1 / -1; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>AssetTracker</h1>
+    <p>IT &amp; Laboratory Equipment Inventory System</p>
+  </div>
+  <div class="header-actions">
+    <span class="badge">Live Web Demo Build</span>
+    <button class="btn-secondary btn-sm" onclick="resetDemo()">Reset Sample Data</button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="stats">
+    <div class="stat-card"><span>Total Assets</span><strong id="statTotal">0</strong></div>
+    <div class="stat-card"><span>Active / Deployed</span><strong id="statActive">0</strong></div>
+    <div class="stat-card"><span>In Maintenance</span><strong id="statMaint">0</strong></div>
+    <div class="stat-card"><span>Retired</span><strong id="statRetired">0</strong></div>
+  </div>
+
+  <div class="panel">
+    <div class="toolbar">
+      <div class="filters">
+        <div class="field">
+          <label for="searchInput">Search</label>
+          <input type="text" id="searchInput" placeholder="Asset name, tag, serial..." oninput="renderTable()" />
+        </div>
+        <div class="field">
+          <label for="categoryFilter">Category</label>
+          <select id="categoryFilter" onchange="renderTable()">
+            <option value="">All Categories</option>
+            <option value="Desktop / PC">Desktop / PC</option>
+            <option value="Laptop">Laptop</option>
+            <option value="Monitor">Monitor</option>
+            <option value="Networking">Networking</option>
+            <option value="Peripheral">Peripheral</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter" onchange="renderTable()">
+            <option value="">All Statuses</option>
+            <option value="Active">Active</option>
+            <option value="Maintenance">Maintenance</option>
+            <option value="Retired">Retired</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="dateFrom">Last Entry (From)</label>
+          <input type="date" id="dateFrom" onchange="renderTable()" />
+        </div>
+        <div class="field">
+          <label for="dateTo">Last Entry (To)</label>
+          <input type="date" id="dateTo" onchange="renderTable()" />
+        </div>
+      </div>
+      <button class="btn-primary" onclick="openModal()">+ Add Asset</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Asset Tag</th>
+            <th>Asset Name</th>
+            <th>Category</th>
+            <th>Serial Number</th>
+            <th>Location / Assigned</th>
+            <th>Status</th>
+            <th>Last Entry</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="assetBody"></tbody>
+      </table>
+      <div id="emptyState" class="empty" style="display:none;">No matching asset records found.</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="assetModal">
+  <div class="modal">
+    <h2 id="modalTitle">Add New Asset</h2>
+    <form id="assetForm" onsubmit="saveAsset(event)">
+      <input type="hidden" id="editId" />
+      <div class="form-grid">
+        <div class="field">
+          <label for="assetTag">Asset Tag</label>
+          <input type="text" id="assetTag" placeholder="AST-1006" required />
+        </div>
+        <div class="field">
+          <label for="serialNum">Serial Number</label>
+          <input type="text" id="serialNum" placeholder="SN-884120" required />
+        </div>
+        <div class="field full">
+          <label for="assetName">Asset Name / Model</label>
+          <input type="text" id="assetName" placeholder="Dell OptiPlex 7090" required />
+        </div>
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category" required>
+            <option value="Desktop / PC">Desktop / PC</option>
+            <option value="Laptop">Laptop</option>
+            <option value="Monitor">Monitor</option>
+            <option value="Networking">Networking</option>
+            <option value="Peripheral">Peripheral</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status" required>
+            <option value="Active">Active</option>
+            <option value="Maintenance">Maintenance</option>
+            <option value="Retired">Retired</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="location">Location / Assigned To</label>
+          <input type="text" id="location" placeholder="Computer Lab 2" required />
+        </div>
+        <div class="field">
+          <label for="entryDate">Last Entry Date</label>
+          <input type="date" id="entryDate" required />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary">Save Record</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'assettracker_demo_v1';
+  const defaultAssets = [
+    { id: 1, tag: 'AST-1001', name: 'Dell OptiPlex 7090 Tower', category: 'Desktop / PC', serial: 'DL-7090-841A', location: 'Computer Lab 1 - PC 01', status: 'Active', date: '2026-11-18' },
+    { id: 2, tag: 'AST-1002', name: 'HP ProDisplay P24v 24"', category: 'Monitor', serial: 'HP-24V-3920', location: 'Computer Lab 1 - PC 01', status: 'Active', date: '2026-11-18' },
+    { id: 3, tag: 'AST-1003', name: 'Cisco Catalyst 2960 Switch', category: 'Networking', serial: 'CSC-2960-991X', location: 'Server Rack B', status: 'Active', date: '2026-11-20' },
+    { id: 4, tag: 'AST-1004', name: 'Lenovo ThinkPad T14 Gen 3', category: 'Laptop', serial: 'LNV-T14-5521', location: 'IT Faculty Office', status: 'Maintenance', date: '2026-11-21' },
+    { id: 5, tag: 'AST-1005', name: 'Epson EcoTank L3210 Printer', category: 'Peripheral', serial: 'EPS-3210-1104', location: 'Admin Room', status: 'Retired', date: '2026-11-12' }
+  ];
+
+  let assets = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || [...defaultAssets];
+
+  function persist() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
+  }
+
+  function resetDemo() {
+    assets = [...defaultAssets];
+    persist();
+    renderTable();
+  }
+
+  function renderTable() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    const cat = document.getElementById('categoryFilter').value;
+    const st = document.getElementById('statusFilter').value;
+    const from = document.getElementById('dateFrom').value;
+    const to = document.getElementById('dateTo').value;
+
+    const filtered = assets.filter(item => {
+      const matchesText = !q ||
+        item.tag.toLowerCase().includes(q) ||
+        item.name.toLowerCase().includes(q) ||
+        item.serial.toLowerCase().includes(q) ||
+        item.location.toLowerCase().includes(q);
+      const matchesCat = !cat || item.category === cat;
+      const matchesStatus = !st || item.status === st;
+      const matchesFrom = !from || item.date >= from;
+      const matchesTo = !to || item.date <= to;
+      return matchesText && matchesCat && matchesStatus && matchesFrom && matchesTo;
+    });
+
+    document.getElementById('statTotal').textContent = assets.length;
+    document.getElementById('statActive').textContent = assets.filter(a => a.status === 'Active').length;
+    document.getElementById('statMaint').textContent = assets.filter(a => a.status === 'Maintenance').length;
+    document.getElementById('statRetired').textContent = assets.filter(a => a.status === 'Retired').length;
+
+    const tbody = document.getElementById('assetBody');
+    const empty = document.getElementById('emptyState');
+    tbody.innerHTML = '';
+
+    if (filtered.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    filtered.forEach(item => {
+      const pillClass = item.status === 'Active' ? 'pill-active' : (item.status === 'Maintenance' ? 'pill-maintenance' : 'pill-retired');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${escapeHtml(item.tag)}</strong></td>
+        <td>${escapeHtml(item.name)}</td>
+        <td>${escapeHtml(item.category)}</td>
+        <td><code>${escapeHtml(item.serial)}</code></td>
+        <td>${escapeHtml(item.location)}</td>
+        <td><span class="pill ${pillClass}">${escapeHtml(item.status)}</span></td>
+        <td>${escapeHtml(item.date)}</td>
+        <td>
+          <button class="btn-secondary btn-sm" onclick="openModal(${item.id})">Edit</button>
+          <button class="btn-danger btn-sm" onclick="deleteAsset(${item.id})">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+  }
+
+  function openModal(id = null) {
+    const modal = document.getElementById('assetModal');
+    const title = document.getElementById('modalTitle');
+    if (id) {
+      const item = assets.find(a => a.id === id);
+      title.textContent = 'Edit Asset';
+      document.getElementById('editId').value = item.id;
+      document.getElementById('assetTag').value = item.tag;
+      document.getElementById('serialNum').value = item.serial;
+      document.getElementById('assetName').value = item.name;
+      document.getElementById('category').value = item.category;
+      document.getElementById('status').value = item.status;
+      document.getElementById('location').value = item.location;
+      document.getElementById('entryDate').value = item.date;
+    } else {
+      title.textContent = 'Add New Asset';
+      document.getElementById('assetForm').reset();
+      document.getElementById('editId').value = '';
+      document.getElementById('entryDate').value = new Date().toISOString().slice(0, 10);
+    }
+    modal.classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('assetModal').classList.remove('open');
+  }
+
+  function saveAsset(e) {
+    e.preventDefault();
+    const editId = document.getElementById('editId').value;
+    const record = {
+      id: editId ? Number(editId) : Date.now(),
+      tag: document.getElementById('assetTag').value.trim(),
+      serial: document.getElementById('serialNum').value.trim(),
+      name: document.getElementById('assetName').value.trim(),
+      category: document.getElementById('category').value,
+      status: document.getElementById('status').value,
+      location: document.getElementById('location').value.trim(),
+      date: document.getElementById('entryDate').value
+    };
+
+    if (editId) {
+      assets = assets.map(a => a.id === record.id ? record : a);
+    } else {
+      assets.unshift(record);
+    }
+    persist();
+    closeModal();
+    renderTable();
+  }
+
+  function deleteAsset(id) {
+    assets = assets.filter(a => a.id !== id);
+    persist();
+    renderTable();
+  }
+
+  renderTable();
+</script>
+</body>
+</html>
