@@ -1,25 +1,22 @@
-# AssetTracker Desktop (v1.0.0) 
+# AssetTracker
 
-AssetTracker is an offline Windows desktop application for tracking IT and laboratory hardware assets. It runs a PHP and SQLite interface inside an Electron desktop window so equipment records stay stored locally on the workstation.
+Single-owner Physical & Digital Asset Vault for tracking asset locations, movement history, and folder categories.
 
-## Download
+## Live Demo
 
+- **Web Demo (GitHub Pages):** `https://gazing-blurb-depict.github.io/Asset-Tracker/`
+- **Desktop Installer (Windows):** Available under [Releases](../../releases/latest)
 - [Download AssetTracker Setup 1.0.0.exe (Windows)](https://drive.google.com/file/d/1gEZkpTcij2Pm718mYsvyZy100NlCxOZS/view?usp=drive_link)
 
 ## Features
 
-- **Asset inventory management:** Add, edit, and view hardware records including asset details, serial numbers, categories, and status.
-- **Search and filtering:** Filter records by keyword, status, category, or entry date range.
-- **Local SQLite storage:** Stores all data offline in `%APPDATA%\assettracker-desktop\vault.sqlite` with no internet connection or database server setup required.
+- **Physical & Digital Asset Vault:** Register physical items and digital files/URLs with custom or auto-generated IDs (`ASSET-001`), optional nicknames, and typed folders.
+- **Location Movement History:** Log location updates with directions and notes while keeping a full chronological audit trail.
+- **Search, Filtering & Sorting:** Search by ID, name, nickname, or location; filter by folder, type (`Physical` / `Digital`), status (`Active`, `In Transit`, `Maintenance`, `Archived`), and last-entry date range.
+- **Dashboard & Pending Alerts:** Track total, physical, digital, and pending-update counts (assets with no entry in 30+ days).
+- **Vault Security & Backups:** Optional master password lock, CSV export, and full JSON vault backup/restore.
 
-## System Requirements
+## Architecture
 
-- Windows 10 or Windows 11 (64-bit)
-- XAMPP for Windows installed in its default folder (`C:\xampp`) for PHP runtime extensions (Apache and MySQL services do not need to be running)
-
-## Installation
-
-1. Confirm that XAMPP is installed at `C:\xampp`.
-2. Download **`AssetTracker Setup 1.0.0.exe`** from the release link above and run the installer.
-3. If Windows Defender SmartScreen appears, click **More info** and select **Run anyway**.
-4. Open **AssetTracker** from your Desktop shortcut or Start Menu.
+- **GitHub Pages Build (`index.html`, `style.css`, `app.js`):** Static client-side build backed by `localStorage` for instant browser deployment.
+- **Web / Desktop Build (`index.php`, `api.php`, `db.php`, `main.js`):** PHP + MySQL (XAMPP) or Electron + SQLite (`vault.sqlite`).
